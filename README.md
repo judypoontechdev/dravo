@@ -18,8 +18,8 @@ Dravo!! ("Driving" + "Bravo") is a full-stack web application designed to digita
 Students are added and soft-deleted through modal pop-ups directly on this page:
 
 <p align="center">
-  <img src="screenshots/Addstudent_modalpopup.png" width="48%" />
-  <img src="screenshots/Removestudent_modalpopup.png" width="48%" />
+  <img src="screenshots/Addstudent_modalpopup.png" width="35%" />
+  <img src="screenshots/Removestudent_modalpopup.png" width="35%" />
 </p>
 
 **Schedule** — A centralized calendar view that fetches lesson data live from the database, providing a clear picture of upcoming availability.
@@ -33,8 +33,8 @@ Students are added and soft-deleted through modal pop-ups directly on this page:
 **Student Portfolio** — A detailed profile for each student, displaying personal information alongside a full lesson history. Lessons are added via modal pop-ups; upon submission, the application utilizes AJAX (via fetch()) to instantly append the new lesson to the lessons table, while simultaneously creating a corresponding entry in the progress notes table. These notes are then automatically saved via a blur() event, providing a fluid, responsive experience that keeps the workflow moving without interruption.
 
 <p align="center">
-  <img src="screenshots/Studentportfolio.png" width="68%" />
-  <img src="screenshots/Addlesson_modalpopup.png" width="46%" />
+  <img src="screenshots/Studentportfolio.png" width="100%" />
+  <img src="screenshots/Addlesson_modalpopup.png" width="35%" />
 </p>
 
 **AI Driving Coach** — An intelligent assistant (chatbot) that analyses personal lesson notes to answer specific questions about a student's progress. It provides grounded, data-driven feedback, helping instructors in identifying areas for improvement and guiding students toward a first-time pass.
