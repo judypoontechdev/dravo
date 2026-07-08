@@ -10,9 +10,10 @@ Dravo!! ("Driving" + "Bravo") is a full-stack web application designed to digita
   <img src="screenshots/Login.png" width="48%" />
   <img src="screenshots/Register.png" width="48%" />
 </p>
+
 **Dashboard** — Provides a high-level overview of the teaching business. Features include interactive student tiles for quick access to portfolios, a donut chart visualizing monthly revenue by student contribution, and a weekly lesson schedule outlook for a quick skim of upcoming commitments. Navigation links are integrated throughout the dashboard, providing direct access to detailed pages for the full schedule, finance management, and student portfolio evaluations.
 
-![Dashboard screenshot](screenshots/Dashboard.png)
+<img src="screenshots/Dashboard.png" width="100%" />
 
 Students are added and soft-deleted through modal pop-ups directly on this page:
 
@@ -32,8 +33,8 @@ Students are added and soft-deleted through modal pop-ups directly on this page:
 **Student Portfolio** — A detailed profile for each student, displaying personal information alongside a full lesson history. Lessons are added via modal pop-ups; upon submission, the application utilizes AJAX (via fetch()) to instantly append the new lesson to the lessons table, while simultaneously creating a corresponding entry in the progress notes table. These notes are then automatically saved via a blur() event, providing a fluid, responsive experience that keeps the workflow moving without interruption.
 
 <p align="center">
-  <img src="screenshots/Studentportfolio.png" width="58%" />
-  <img src="screenshots/Addlesson_modalpopup.png" width="38%" />
+  <img src="screenshots/Studentportfolio.png" width="68%" />
+  <img src="screenshots/Addlesson_modalpopup.png" width="46%" />
 </p>
 
 **AI Driving Coach** — An intelligent assistant (chatbot) that analyses personal lesson notes to answer specific questions about a student's progress. It provides grounded, data-driven feedback, helping instructors in identifying areas for improvement and guiding students toward a first-time pass.
@@ -49,7 +50,7 @@ Students are added and soft-deleted through modal pop-ups directly on this page:
 
 **Frontend: Prioritizing Workflow Efficiency**
 
-Standard web applications often rely on full-page reloads for data updates, which can disrupt a user's flow. Since logging lessons and notes are high-frequency tasks, a full reload was identified as a major bottleneck. To streamline this, the application replaces standard form submissions with AJAX and fetch(). Lessons are added via modal pop-ups and appended to the table instantly without page refreshes. Furthermore, progress notes utilize blur() events to enable "auto-saving," removing the need for a manual "Save" button. This ensures the instructor never loses their place or navigates away from their current workspace.
+Standard web applications often rely on full-page reloads for data updates, which can disrupt a user's flow. Since logging lessons and notes are high-frequency tasks, a full reload was identified as a major bottleneck. To streamline this, the application replaces standard form submissions with AJAX (via fetch()). Lessons are added via modal pop-ups and appended to the table instantly without page refreshes. Furthermore, progress notes utilize blur() events to enable "auto-saving," removing the need for a manual "Save" button. This ensures the instructor never loses their place mid-task.
 
 **Backend: Ensuring Data Integrity and Security**
 
@@ -61,7 +62,7 @@ The project began with SQLite to prioritize speed during the initial schema prot
 
 **AI: Optimizing Retrieval for Performance**
 
-To avoid high latency and unnecessary costs as student history expands, the AI Driving Coach avoids sending entire historical datasets to the model. Instead, it utilizes embedding similarity to retrieve only the five most relevant lesson notes. This "Retrieval-Augmented Generation" (RAG) approach keeps the AI’s response time and API costs constant, regardless of whether a student has been enrolled for weeks or years.
+To avoid high latency and unnecessary costs as student history expands, the AI Driving Coach avoids sending entire historical datasets to the model. Instead, it utilizes embedding similarity to retrieve only the five most relevant lesson notes. This "Retrieval-Augmented Generation" (RAG) approach keeps the AI's response time and API costs constant, regardless of whether a student has been enrolled for weeks or years.
 
 **Security: Protecting Sensitive Information**
 
