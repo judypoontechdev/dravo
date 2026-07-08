@@ -1,0 +1,51 @@
+body {
+    background-image: url('/static/background.png');
+
+    background-size: cover;
+ 
+    background-position: center;
+ 
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+}
+
+/* ==========================================
+   AI Chatbot
+========================================== */
+
+#ai-chat-button{
+
+    position: fixed;
+
+    bottom: 30px;
+
+    right: 30px;
+
+    width: 65px;
+
+    height: 65px;
+
+    border-radius: 50%;
+
+    font-size: 28px;
+
+    z-index: 9999;
+
+}
+
+#ai-answer{
+
+    min-height: 180px;
+
+    white-space: pre-wrap;
+
+}
+
+#ai-answer.loading{
+
+    color: grey;
+
+    font-style: italic;
+
+}

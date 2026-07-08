@@ -1,0 +1,292 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block main %}
+
+<!-- Block elements (div, h1, p) always take a full row by default.
+Inline elements (button, span, a, i) only take as much width as their
+content needs and sit side by side if there's room - which is why the
+two buttons below sit on the same row without any extra layout code. -->
+
+<!-- d-flex unlocks Bootstrap's Flexbox controls on an element:
+d-flex flex-column stacks children vertically instead of the default
+horizontal flow; justify-content-center centers them; gap-3 adds even
+spacing between them without manually setting margins. -->
+
+<!-- Button type matters: type="button" never triggers a page
+reload or form submission on its own - it's for JS-driven actions
+like opening/closing this modal. type="submit" (a button's default
+inside a <form>) packages up the form's inputs and POSTs them to the
+backend. type="reset" clears all filled fields back to blank. -->
+
+<!-- btn adds Bootstrap's default padding, centering, and rounded
+corners over the browser's plain default button style. btn-success /
+btn-danger color the button green/red and darken slightly on hover. -->
+
+<!-- id is a page-unique identifier; class applies Bootstrap/CSS
+styling; style is inline CSS written directly on the element. -->
+
+<!-- container-fluid stretches to 100% of the viewport width.
+py-4 adds vertical padding so content doesn't sit flush against the
+top/bottom edge of the browser window. -->
+<div class="container-fluid py-4">
+    <!-- row opens a horizontal flex context, letting the col-* divs
+    below it sit side by side instead of stacking. -->
+    <div class="row">
+        <!-- col-6 claims 6 of Bootstrap's 12 grid columns, i.e. 50%
+        width - this left half holds the button panel and student
+        tiles. col-md-6 applies that same 50% split only from medium
+        screens (~768px) upward, so it stacks full-width on mobile. -->
+        <div class="col-md-6">
+            <!-- Stacks the button panel and student tile section
+            vertically (flex-column) with a consistent gap between
+            them (gap-4). -->
+            <div class="d-flex flex-column gap-4">
+            <!-- bg-light/p-3/rounded/shadow-sm give this section a
+            card-like background, inner padding, rounded corners,
+            and a subtle drop shadow. -->
+                <div class="p-3 bg-light rounded shadow-sm">
+                    <!-- Caps the button group's width so it doesn't
+                    stretch to fill the full 50% column. -->
+                    <div class="d-flex flex-column gap-2" style="max-width: 250px">
+                        <!-- data-bs-toggle/data-bs-target wire this
+                        button to open the #addStudentModal below by ID. -->
+                        <button type="button" class="btn btn-success d-flex align-items-center gap-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addStudentModal">
+                            <i class="fa-solid fa-plus"></i>Click to add student
+                        </button>
+
+                        <!-- Add-student modal: hidden by default, with a
+                        fade transition when opened/closed. -->
+                        <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow-lg">
+                                    <!-- Submitting this form POSTs its fields to /addstudent. -->
+                                    <form action="/addstudent" method="POST">
+                                        <div class="modal-header bg-light">
+                                            
+                                            <h5 class="modal-title fw-bold" id="addStudentModalLabel">🇬🇧 New Student Registration</h5>
+                                            
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        
+                                        <div class="modal-body p-4">
+                                            <div class="row">                                            
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">Student Full Name</label>
+                                                    
+                                                    <!-- name="student_name" is the key Flask reads on
+                                                    the backend via request.form.get('student_name'). -->
+                                                    <input type="text" name="student_name" class="form-control" placeholder="e.g. James Smith" required>
+                                                </div>
+
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label fw-semibold">Residential Address</label>
+                                                    <textarea name="address" class="form-control" rows="3" placeholder="e.g. 123 London Road, London, SE1 7AA"></textarea>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">UK Contact Number</label>
+                                                    
+                                                    <!-- type="tel" prompts a numeric keypad on mobile. -->
+                                                    <input type="tel" name="phone" class="form-control" placeholder="e.g. 07123 456789" required>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">Date of Birth (DOB)</label>
+                                                    <input type="date" name="DOB" class="form-control"> 
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">Gender</label>
+                                                    <select name="gender" class="form-select">
+                                                        <option value="" disabled selected>Select gender...</option>
+                                                        <option value="Male">Male</option>
+                                                        <option value="Female">Female</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">Transmission Type</label>
+                                                    
+                                                    <select name="transmission" class="form-select" required>
+                                                        
+                                                        <!-- Disabled placeholder option - visible but not selectable. -->
+                                                        <option value="" disabled selected>Select transmission...</option>
+                                                        <option value="Automatic">Automatic</option>
+                                                        <option value="Manual">Manual</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">Hourly Rate (£)</label>
+                                                    
+                                                    <!-- input-group visually merges the £ symbol with the input field. -->
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">£</span>
+                                                        
+                                                        <!-- min="0" prevents a negative hourly rate. -->
+                                                        <input type="number" name="hourly_rate" class="form-control" placeholder="35" min="0" required>
+                                                    </div>
+                                                    
+                                                    <div class="form-text">Average UK driving lesson standard rate is around £35-£40.</div>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">Driving Test Centre</label>
+                                                    <input type="text" name="test_centre" class="form-control" placeholder="e.g. Hither Green">
+                                                </div>  
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label fw-semibold">Driving Test Date</label>
+                                                    <input type="date" name="test_date" class="form-control">
+                                                </div>                                                
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="modal-footer bg-light">
+                                            
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            
+                                            <!-- type="submit" is what actually fires the POST above. -->
+                                            <button type="submit" class="btn btn-success px-4 fw-bold">Save Student</button>
+                                        </div>
+                                        
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#removeStudentModal">
+                            <i class="fa-solid fa-minus"></i>Click to remove student
+                        </button>
+
+                        <div class="modal fade" id="removeStudentModal" tabindex="-1" aria-labelledby="removeStudentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="removeStudentModalLabel">Remove a Student</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    
+                                    <form action="/remove_student" method="POST">
+                                        <div class="modal-body">
+                                            <p>Please select the student you want to remove:</p>
+                                            <select name="student_id" class="form-select" required>
+                                                <option value="" disabled selected>Select a student...</option>
+                                                {% for s in students %}
+                                                <option value="{{ s.id }}">{{ s.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-danger">Confirm Removal</button>
+                                        </div>
+                                    </form>                                   
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+
+                <!-- Student tiles -->
+                <!-- min-height keeps this section a reasonable size
+                even when there's only one student to show. -->
+                <div class="p-3 bg-light rounded shadow-sm style=min-height: 400px;">
+                    <h5 class="mb-3">Student Tiles</h5>
+                    <div class="row">
+
+                        <!-- students is passed in from home() in app.py:
+                        Student.query.filter_by(is_active=True, instructor_id=...) -->
+                        {% for s in students %}
+                        
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm border-0 bg-white p-3">
+                                <div class="card-body">
+                                    
+                                    <h5 class="card-title fw-bold">
+                                        <a href="/portfolio/{{ s.id }}" class="text-success text-decoration-none hover-link">
+                                            👤 {{ s.name }}
+                                        </a>
+                                    </h5>
+                                    
+                                    <p class="card-text text-muted mb-1">📞 Phone: {{ s.phone }}</p>
+                                    <p class="card-text text-muted mb-1">🚙 Gear: {{ s.transmission }}</p>
+                                    <span class="badge bg-light text-dark border">£{{ s.hourly_rate }}/hr</span>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% endfor %}                       
+                    </div>                   
+                </div>  
+                             
+            </div> 
+        </div>
+
+
+        <!-- Top Right portion of the website - financial earnings-->
+        <div class="col-md-6">
+            <div class="d-flex flex-column gap-4">
+                <div class="p-3 bg-light rounded shadow-sm">
+                    <h4 class="mb-3 text-dark fw.bold">Monthly Earnings!</h4>
+                    <a href="/finance">Click to check monthly earnings breakdown</a>
+                    <div id="finance-donut-chart"></div>                              
+                </div>
+
+                <div class="p-3 bg-light rounded shadow-sm">
+                    <h4 class="mb-3 text-dark fw.bold">Weekly Schedule Outlook! ({{ week_range_str }})</h4>
+                    <a href="/schedule">Click to check monthly schedule</a>
+                    <table class="table table-hover align-middle">
+                        <tbody>
+                            {% for lesson in weekly_outlook %}
+                            <tr>
+                                <td class="fw-bold text-primary" style="width: 25%">{{lesson.date}}</td>
+                                <td>
+                                    <div class="fw-semibold text-dark">Student: {{lesson.student}}</div>
+                                    <div class="text-muted small mt-1">Time: {{lesson.time}}</div>
+                                    <div class="text-secondary small">Duration: {{lesson.duration}} hours</div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">No classes scheduled this week!</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <!-- Bridges backend data into script.js. tojson converts the
+    Python lists current_month_earnings/current_month_students into
+    valid JS array syntax at render time (e.g. Python's ['Judy'] with
+    single quotes becomes JS's ["Judy"] with double quotes), which
+    script.js then reads off window.donutSeries/window.donutLabels. -->
+    <script>
+        window.donutSeries = {{ current_month_earnings | tojson }};
+        window.donutLabels = {{ current_month_students | tojson }};
+    </script>
+    
+    <!-- The calendar doesn't need this same window-bridge treatment,
+    since /get_lessons already returns JSON directly for FullCalendar
+    to fetch on its own. -->
+    <script src="/static/script.js"></script>
+{% endblock %}
