@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    ports:
+      - "5001:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/dravo_db
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=dravo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

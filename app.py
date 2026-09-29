@@ -44,8 +44,8 @@ print(f" TECHNICAL CHECK: The loaded database address is -> {database_address}")
 # establish the actual connection to PostgreSQL.
 db = SQLAlchemy(app)
 
-from flask_migrate import Migrate
-migrate = Migrate(app, db)
+#from flask_migrate import Migrate
+#migrate = Migrate(app, db)
 
 ### Set up Session
 app.config["SESSION_PERMANENT"] = False
@@ -577,3 +577,6 @@ with app.app_context():
     print("Creating tables...")
     db.create_all()
     print("Tables created!")
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

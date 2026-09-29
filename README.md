@@ -38,10 +38,9 @@ Students are added and soft-deleted through modal pop-ups directly on this page:
 
 ![AI driving coach screenshot](screenshots/AIdrivingcoach.png)
 
-
 ## 3. Tech Stack
-![Tech stack](screenshots/Techstack.png)
 
+![Tech stack](screenshots/Techstack.png)
 
 ## 4. Design Decisions
 
@@ -98,27 +97,78 @@ Discrepancies between development environments were mitigated by standardizing o
 **Deterministic Query Ordering:**
 Relational databases do not guarantee the order of returned rows unless explicitly instructed. This was identified when lesson notes appeared to shift positions randomly after page refreshes. The solution requires explicit declaration of retrieval order to ensure UI consistency:
 
-  ```python
-  Lesson.query.filter_by(student_id=student_id).order_by(Lesson.id).all()
-  ```
-This confirms that the UI reflects the actual sequence of events, as row order is not an inherent promise of the database layer.
-
-## 9. Running locally
-
-```bash
-git clone <repo>
-cd dravo
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-
-export DATABASE_URL="postgresql://<user>:<password>@localhost:5432/dravo"
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env
-
-python testclaude.py
-python testembedding.py
-python testrag.py
-
-flask --app app run
+```python
+Lesson.query.filter_by(student_id=student_id).order_by(Lesson.id).all()
 ```
 
-Requires a local PostgreSQL instance with a `dravo` database created in advance.
+This confirms that the UI reflects the actual sequence of events, as row order is not an inherent promise of the database layer.
+
+## 9. Docker Learnings & Technical Deep-Dive
+
+Moving from local virtual environments (`.venv`) to a containerized architecture introduced several key learnings regarding environment parity, packaging, and caching layers:
+
+### 1. System-Level vs. Package-Level Caching & Cleanup
+
+In a `Dockerfile`, managing dependencies requires distinguishing between OS-level and Python package-level cache clearing mechanisms to keep the Docker image lightweight:
+
+**System-Level (apt-get):**
+When installing system dependencies (e.g., `libpq-dev` required for compiling `psycopg2`), Debian's package manager downloads and retains large index caches in `/var/lib/apt/lists/`. If not cleared, this inflates the image size:
+
+```dockerfile
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+```
+
+_(Note: Chaining `&& rm -rf /var/lib/apt/lists/_`ensures the cleanup happens in the exact same`RUN` layer as the installation, preventing Docker from baking the cache into the image's history.)\*
+
+**Python Package-Level (pip):**
+Python's `pip` also caches downloaded `.whl` files locally by default. Appending the `--no-cache-dir` flag prevents `pip` from writing these temporary files to the container, ensuring a clean application layer:
+
+```dockerfile
+RUN pip install --no-cache-dir -r requirements.txt
+```
+
+### 2. Build-Time Caching (`docker compose build --no-cache`)
+
+Beyond file-level caches, when code or dependencies are modified but Docker continues to run stale versions, the command-level `--no-cache` flag forces Docker to bypass old image layers and rebuild entirely from scratch:
+
+```bash
+docker compose build --no-cache
+```
+
+### 3. Network Binding (`0.0.0.0` vs `127.0.0.1`)
+
+If a Flask application runs inside a container, it defaults to binding to the local loopback (`127.0.0.1`), making it completely inaccessible to the host machine. It must be explicitly set to `0.0.0.0` to listen on all network interfaces and successfully route traffic through the Docker bridge:
+
+```python
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+```
+
+### 4. Port Mapping & Host OS Conflicts
+
+Local port clashes—such as the macOS Control Center's AirPlay Receiver stubbornly occupying port `5000`—were cleanly resolved via Docker port mapping. Mapping the container port `5000` to the host port `5001` bypasses the conflict entirely, preserving host system functionality without disabling built-in OS features:
+
+```yaml
+ports:
+  - "5001:5000"
+```
+
+## 10. Running Locally with Docker
+
+To run DraVo seamlessly using Docker Compose and PostgreSQL:
+
+```bash
+# 1. Clone the repository
+git clone <repo>
+cd dravo
+
+# 2. Set up your environment variables
+echo "DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/dravo_db" > .env
+echo "ANTHROPIC_API_KEY=sk-ant-..." >> .env
+
+# 3. Build and launch containers
+docker compose up --build -d
+```
